@@ -233,7 +233,7 @@ namespace InterCol
         {
             return Enumerable.Range(0, _adjacencyMatrix.GetLength(0)).Select(i => VerticeDegree(i)).Sum() / 2;
         }
-        public void SaveToCSV(string filename)
+        public void Save(string filename)
         {
             string csv = "";
             for (int i = 0; i < _adjacencyMatrix.GetLength(0); i++)
@@ -247,7 +247,7 @@ namespace InterCol
                 }
             File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + filename, csv.TrimEnd(new char[] { '\r', '\n' }));
         }
-        public static UndirectedGraph LoadFromCSV(string filename)
+        public static UndirectedGraph Load(string filename)
         {
             string readText = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + filename).Replace("\r", string.Empty);
             int verticeCount = (int)Math.Sqrt((readText.Length + 1) / 2);

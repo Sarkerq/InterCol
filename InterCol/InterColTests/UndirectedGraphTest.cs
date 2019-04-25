@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using InterCol;
+using System.IO;
+using System.Text.RegularExpressions;
 
 namespace InterColTests
 {
@@ -51,7 +53,7 @@ namespace InterColTests
             Assert.IsTrue(graph.VerticeDegree(1) == 1);
         }
         [TestMethod]
-        public void CSVSaveAndLoadResultsInIdenticalGraph()
+        public void SaveAndLoadResultsInIdenticalGraph()
         {
             var graph = new UndirectedGraph(5);
             graph.AddEdges(new System.Collections.Generic.List<Tuple<int, int>>()
@@ -64,9 +66,81 @@ namespace InterColTests
 
             });
 
-            graph.SaveToCSV("test.csv");
-            var graph2 = UndirectedGraph.LoadFromCSV("test.csv");
+            graph.Save("test.txt");
+            var graph2 = UndirectedGraph.Load("test.txt");
             Assert.IsTrue(UndirectedGraph.Identical(graph, graph2));
+        }
+        [TestMethod]
+        public void LoadAndSaveResultsInIdenticalGraph()
+        {
+            string graphPathCommon = "./";
+            List<string> graphPaths = new List<string>()
+            {
+                "C10.txt",
+                "K4.txt",
+                "Empty5.txt",
+                "Matching12.txt"
+            };
+            List<string> fullGraphPaths = graphPaths.Select(p => graphPathCommon + p).ToList();
+            foreach (string path in fullGraphPaths)
+            {
+                string savedPath = "tmp/test.txt";
+
+                string fullSavePath = graphPathCommon + savedPath;
+                var graph = UndirectedGraph.Load(path);
+                graph.Save(fullSavePath);
+                string origFileContents = File.ReadAllText(path);
+                string savedFileContents = File.ReadAllText(fullSavePath);
+                Assert.IsTrue(StringEqualToWhitespace(origFileContents, savedFileContents));
+            }
+        }
+
+        private bool StringEqualToWhitespace(string s1, string s2)
+        {
+            string normalized1 = Regex.Replace(s1, @"\s", "");
+            string normalized2 = Regex.Replace(s2, @"\s", "");
+
+            return String.Equals(
+                normalized1,
+                normalized2,
+                StringComparison.OrdinalIgnoreCase);
+        }
+
+        [TestMethod]
+        public void C10LoadsCorrect()
+        {
+            var graph = UndirectedGraph.Load("C10.txt");
+            Assert.IsTrue(graph.VerticeCount() == 10);
+            Assert.IsTrue(graph.EdgeCount() == 10);
+            for (int i = 0; i < 10; i++)
+                Assert.IsTrue(graph[i, (i + 1) % 10] == 1);
+        }
+        [TestMethod]
+        public void K4LoadsCorrect()
+        {
+            var graph = UndirectedGraph.Load("K4.txt");
+            Assert.IsTrue(graph.VerticeCount() == 4);
+            Assert.IsTrue(graph.EdgeCount() == 6);
+            for (int i = 0; i < 3; i++)
+                for (int j = i + 1; j < 3; j++)
+                    Assert.IsTrue(graph[i, j] == 1);
+
+        }
+        [TestMethod]
+        public void Empty5LoadsCorrect()
+        {
+            var graph = UndirectedGraph.Load("Empty5.txt");
+            Assert.IsTrue(graph.VerticeCount() == 5);
+            Assert.IsTrue(graph.EdgeCount() == 0);
+        }
+        [TestMethod]
+        public void Matching12LoadsCorrect()
+        {
+            var graph = UndirectedGraph.Load("Matching12.txt");
+            Assert.IsTrue(graph.VerticeCount() == 12);
+            Assert.IsTrue(graph.EdgeCount() == 6);
+            for (int i = 0; i < 12; i += 2)
+                Assert.IsTrue(graph[i, i + 1] == 1);
         }
         [TestMethod]
         public void CSVSaveAndLoadResultsInIdenticalList()
