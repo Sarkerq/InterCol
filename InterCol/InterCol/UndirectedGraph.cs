@@ -235,26 +235,30 @@ namespace InterCol
         }
         public void Save(string filename)
         {
-            string csv = "";
+            string csv = VerticeCount().ToString() + "\n" + EdgeCount().ToString() + "\n";
             for (int i = 0; i < _adjacencyMatrix.GetLength(0); i++)
-                for (int j = 0; j < _adjacencyMatrix.GetLength(0); j++)
+                for (int j = i + 1; j < _adjacencyMatrix.GetLength(0); j++)
                 {
-                    csv += _adjacencyMatrix[i, j].ToString();
-                    if (j == _adjacencyMatrix.GetLength(0) - 1)
-                        csv += Environment.NewLine;
-                    else
-                        csv += ",";
+                    if (_adjacencyMatrix[i, j] == 1)
+                        csv += (i+1).ToString() + " " + (j+1).ToString() + "\n";
                 }
-            File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + filename, csv.TrimEnd(new char[] { '\r', '\n' }));
+            File.WriteAllText(filename, csv.TrimEnd(new char[] { '\r', '\n' }));
         }
         public static UndirectedGraph Load(string filename)
         {
-            string readText = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + filename).Replace("\r", string.Empty);
-            int verticeCount = (int)Math.Sqrt((readText.Length + 1) / 2);
+            string[] readTexts = File.ReadAllText(filename).TrimEnd('\n').Split('\n');
+            if (readTexts.Length != int.Parse(readTexts[1]) + 2)
+                throw new Exception("Bad graph format - edge count incorrect");
+            int verticeCount = int.Parse(readTexts[0]);
             var graph = new UndirectedGraph(verticeCount);
-            for (int i = 0; i * 2 < readText.Length; i++)
+            for (int i = 2; i < readTexts.Length; i++)
             {
-                graph._adjacencyMatrix[i / verticeCount, i % verticeCount] = int.Parse(readText[i * 2].ToString());
+                string[] vertices = readTexts[i].Split(' ');
+                if (vertices.Length != 2)
+                    throw new Exception("Bad graph format - too many vertices in line " + i.ToString());
+                graph._adjacencyMatrix[int.Parse(vertices[0]) - 1, int.Parse(vertices[1]) - 1] = 1;
+                graph._adjacencyMatrix[int.Parse(vertices[1]) - 1, int.Parse(vertices[0]) - 1] = 1;
+
             }
             return graph;
         }

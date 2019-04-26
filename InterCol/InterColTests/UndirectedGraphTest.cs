@@ -11,6 +11,8 @@ namespace InterColTests
     [TestClass]
     public class UndirectedGraphTest
     {
+        string _graphPathCommon = "../../GraphExamples/";
+
         [TestMethod]
         public void VerticeDegreeTest()
         {
@@ -55,6 +57,9 @@ namespace InterColTests
         [TestMethod]
         public void SaveAndLoadResultsInIdenticalGraph()
         {
+            string savedPath = "tmp/test.txt";
+            string fullSavePath = _graphPathCommon + savedPath;
+
             var graph = new UndirectedGraph(5);
             graph.AddEdges(new System.Collections.Generic.List<Tuple<int, int>>()
             {
@@ -66,14 +71,13 @@ namespace InterColTests
 
             });
 
-            graph.Save("test.txt");
-            var graph2 = UndirectedGraph.Load("test.txt");
+            graph.Save(fullSavePath);
+            var graph2 = UndirectedGraph.Load(fullSavePath);
             Assert.IsTrue(UndirectedGraph.Identical(graph, graph2));
         }
         [TestMethod]
         public void LoadAndSaveResultsInIdenticalGraph()
         {
-            string graphPathCommon = "./";
             List<string> graphPaths = new List<string>()
             {
                 "C10.txt",
@@ -81,12 +85,12 @@ namespace InterColTests
                 "Empty5.txt",
                 "Matching12.txt"
             };
-            List<string> fullGraphPaths = graphPaths.Select(p => graphPathCommon + p).ToList();
+            List<string> fullGraphPaths = graphPaths.Select(p => _graphPathCommon + p).ToList();
             foreach (string path in fullGraphPaths)
             {
                 string savedPath = "tmp/test.txt";
 
-                string fullSavePath = graphPathCommon + savedPath;
+                string fullSavePath = _graphPathCommon + savedPath;
                 var graph = UndirectedGraph.Load(path);
                 graph.Save(fullSavePath);
                 string origFileContents = File.ReadAllText(path);
@@ -109,7 +113,7 @@ namespace InterColTests
         [TestMethod]
         public void C10LoadsCorrect()
         {
-            var graph = UndirectedGraph.Load("C10.txt");
+            var graph = UndirectedGraph.Load(_graphPathCommon + "C10.txt");
             Assert.IsTrue(graph.VerticeCount() == 10);
             Assert.IsTrue(graph.EdgeCount() == 10);
             for (int i = 0; i < 10; i++)
@@ -118,7 +122,7 @@ namespace InterColTests
         [TestMethod]
         public void K4LoadsCorrect()
         {
-            var graph = UndirectedGraph.Load("K4.txt");
+            var graph = UndirectedGraph.Load(_graphPathCommon + "K4.txt");
             Assert.IsTrue(graph.VerticeCount() == 4);
             Assert.IsTrue(graph.EdgeCount() == 6);
             for (int i = 0; i < 3; i++)
@@ -129,27 +133,20 @@ namespace InterColTests
         [TestMethod]
         public void Empty5LoadsCorrect()
         {
-            var graph = UndirectedGraph.Load("Empty5.txt");
+            var graph = UndirectedGraph.Load(_graphPathCommon + "Empty5.txt");
             Assert.IsTrue(graph.VerticeCount() == 5);
             Assert.IsTrue(graph.EdgeCount() == 0);
         }
         [TestMethod]
         public void Matching12LoadsCorrect()
         {
-            var graph = UndirectedGraph.Load("Matching12.txt");
+            var graph = UndirectedGraph.Load(_graphPathCommon + "Matching12.txt");
             Assert.IsTrue(graph.VerticeCount() == 12);
             Assert.IsTrue(graph.EdgeCount() == 6);
             for (int i = 0; i < 12; i += 2)
                 Assert.IsTrue(graph[i, i + 1] == 1);
         }
-        [TestMethod]
-        public void CSVSaveAndLoadResultsInIdenticalList()
-        {
-            Tuple<List<int>, List<int>> testList = new Tuple<List<int>, List<int>>(new List<int>() { 1, 2, 3, 4 }, new List<int>() { 5, 4, 3, 1 });
-            ListCSV.Save(testList, "testlist.csv");
-            var testList2 = ListCSV.Load("testlist.csv");
-            Assert.IsTrue(testList.Item1.SequenceEqual(testList2.Item1) && testList.Item2.SequenceEqual(testList2.Item2));
-        }
+
         [TestMethod]
         public void AdjacencyMatrixTestAfterDeleteEdge()
         {
