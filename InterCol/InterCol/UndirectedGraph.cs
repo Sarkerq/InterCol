@@ -11,7 +11,7 @@ namespace InterCol
     public class UndirectedGraph
     {
         private int[,] _adjacencyMatrix;
-
+        public int[,] ColorMatrix;
         public int[,] AdjacencyMatrix
         {
             get => _adjacencyMatrix;
