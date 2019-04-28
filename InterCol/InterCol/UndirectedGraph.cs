@@ -53,6 +53,19 @@ namespace InterCol
             return subgraph;
         }
 
+        public List<Edge> Edges
+        {
+            get
+            {
+                List<Edge> edges = new List<Edge>();
+                for (int i = 0; i < _adjacencyMatrix.GetLength(0); i++)
+                    for (int j = i + 1; j < _adjacencyMatrix.GetLength(0); j++)
+                        if (_adjacencyMatrix[i, j] == 1)
+                            edges.Add(new Edge(i, j));
+                return edges;
+            }
+        }
+
         public bool IsSubgraphConsistent(List<int> subgraphVertices)
         {
             var subgraphVerticesClone = new List<int>(subgraphVertices);
@@ -240,7 +253,7 @@ namespace InterCol
                 for (int j = i + 1; j < _adjacencyMatrix.GetLength(0); j++)
                 {
                     if (_adjacencyMatrix[i, j] == 1)
-                        csv += (i+1).ToString() + " " + (j+1).ToString() + "\n";
+                        csv += (i + 1).ToString() + " " + (j + 1).ToString() + "\n";
                 }
             File.WriteAllText(filename, csv.TrimEnd(new char[] { '\r', '\n' }));
         }
