@@ -45,7 +45,6 @@
     <Compile Include="Blossom.cs" />
     <Compile Include="Edge.cs" />
     <Compile Include="EdgeAlgorithm.cs" />
-    <Compile Include="Forest.cs" />
     <Compile Include="IntervalColoringAlgorithm.cs" />
     <Compile Include="MatchingAlgorithm.cs" />
     <Compile Include="Program.cs" />
