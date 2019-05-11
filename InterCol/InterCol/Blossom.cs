@@ -99,6 +99,8 @@ namespace InterCol
             {
                 if (rootNeighbours.Count != 2) throw new Exception("Invalid neighbours number");
             }
+
+            return null;
         }
 
         private List<Edge> Contract(List<Edge> currentMatching, List<Edge> blossom, int contractV)

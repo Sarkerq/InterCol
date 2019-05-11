@@ -8,7 +8,7 @@ namespace InterCol
 {
     public class MatchingAlgorithm : IntervalColoringAlgorithm
     {
-        public List<int> ColorGraph(UndirectedGraph graph)
+        public UndirectedGraph ColorGraph(UndirectedGraph graph)
         {
             throw new NotImplementedException();
         }

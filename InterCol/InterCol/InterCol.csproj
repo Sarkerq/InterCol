@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Blossom.cs" />
+    <Compile Include="ColorPosition.cs" />
     <Compile Include="Edge.cs" />
     <Compile Include="EdgeAlgorithm.cs" />
     <Compile Include="IntervalColoringAlgorithm.cs" />

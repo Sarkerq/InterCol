@@ -43,13 +43,13 @@ namespace InterColTests
             for (int ii = 1; ii < 4; ii++)
             {
                 var graph = UndirectedGraph.Load(_graphPathCommon + "ColorTest" + ii.ToString() + ".txt");
-                new EdgeAlgorithm().ColorGraph(graph);
+                var result = new EdgeAlgorithm().ColorGraph(graph);
                 int colorIndex = 0;
-                for (int i = 0; i < graph.AdjacencyMatrix.GetLength(0); i++)
-                    for (int j = i + 1; j < graph.AdjacencyMatrix.GetLength(0); j++)
-                        if (graph[i, j] == 1)
+                for (int i = 0; i < result.AdjacencyMatrix.GetLength(0); i++)
+                    for (int j = i + 1; j < result.AdjacencyMatrix.GetLength(0); j++)
+                        if (result[i, j] == 1)
                         {
-                            Assert.IsTrue(graph.ColorMatrix[i, j] == handCheckedResults[ii][colorIndex]);
+                            Assert.IsTrue(result.ColorMatrix[i, j] == handCheckedResults[ii][colorIndex]);
                             colorIndex++;
                         }
             }
@@ -71,14 +71,14 @@ namespace InterColTests
             for (int ii = 1; ii < 4; ii++)
             {
                 var graph = UndirectedGraph.Load(_graphPathCommon + "MatchingColorTest" + ii.ToString() + ".txt");
-                new MatchingAlgorithm().ColorGraph(graph);
+                var result = new MatchingAlgorithm().ColorGraph(graph);
 
                 int colorIndex = 0;
-                for (int i = 0; i < graph.AdjacencyMatrix.GetLength(0); i++)
-                    for (int j = i + 1; j < graph.AdjacencyMatrix.GetLength(0); j++)
-                        if (graph[i, j] == 1)
+                for (int i = 0; i < result.AdjacencyMatrix.GetLength(0); i++)
+                    for (int j = i + 1; j < result.AdjacencyMatrix.GetLength(0); j++)
+                        if (result[i, j] == 1)
                         {
-                            Assert.IsTrue(graph.ColorMatrix[i, j] == handCheckedResults[ii][colorIndex]);
+                            Assert.IsTrue(result.ColorMatrix[i, j] == handCheckedResults[ii][colorIndex]);
                             colorIndex++;
                         }
             }
