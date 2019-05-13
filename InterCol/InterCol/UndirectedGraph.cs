@@ -90,8 +90,13 @@ namespace InterCol
 
         public int? CalculateColor(Edge edge)
         {
-            if (EdgesForVertex(edge.V1, true).Count == 0
-                && EdgesForVertex(edge.V2, true).Count == 0)
+            var edges1 = EdgesForVertex(edge.V1).ToList();
+            var edges2 = EdgesForVertex(edge.V2).ToList();
+            var coloredEdges1 = edges1.Where(e => e.Color != 0).ToList();
+            var coloredEdges2 = edges2.Where(e => e.Color != 0).ToList();
+
+            if (coloredEdges1.Count == 0
+                && coloredEdges2.Count == 0)
             {
                 return EdgeCount();
             }
@@ -129,7 +134,14 @@ namespace InterCol
                 return 0;
             });
 
-            return rankedColors[0].Color;
+            for (int i = 0; i < rankedColors.Count; i++)
+            {
+                int color = rankedColors[i].Color;
+                if (ValidateColor(coloredEdges1, color, edges1.Count) && ValidateColor(coloredEdges2, color, edges2.Count))
+                    return color;
+            }
+
+            return null;
         }
 
         private ColorPosition CalculateColorPositionForEdge(Edge edge, int color)
@@ -173,6 +185,12 @@ namespace InterCol
             if (color > maxUsedColor)
                 return color - maxUsedColor + 1;
             return null;
+        }
+
+        private bool ValidateColor(IEnumerable<Edge> coloredEdges, int color, int edgesCount)
+        {
+            var colors = coloredEdges.Select(e => e.Color).Concat(new List<int> { color });
+            return colors.Max() - colors.Min() < edgesCount;
         }
 
         public void ColorEdge(Edge edge)

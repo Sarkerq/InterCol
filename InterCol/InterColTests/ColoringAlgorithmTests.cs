@@ -49,7 +49,7 @@ namespace InterColTests
                     for (int j = i + 1; j < result.AdjacencyMatrix.GetLength(0); j++)
                         if (result[i, j] == 1)
                         {
-                            Assert.IsTrue(result.ColorMatrix[i, j] == handCheckedResults[ii][colorIndex]);
+                            Assert.IsTrue(result.ColorMatrix[i, j] == handCheckedResults[ii-1][colorIndex]);
                             colorIndex++;
                         }
             }

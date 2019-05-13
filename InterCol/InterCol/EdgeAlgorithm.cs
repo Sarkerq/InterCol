@@ -29,7 +29,7 @@ namespace InterCol
                 var min2 = Math.Min(
                     graph.EdgesForVertex(e2.V1, false).Count,
                     graph.EdgesForVertex(e2.V2, false).Count);
-                return min1 < min2 ? 1 : (min1 == min2 ? 0 : -1);
+                return min1 > min2 ? 1 : (min1 == min2 ? 0 : -1);
             });
             var limitedSortedNotColoredEdges = notColoredEdges.Take(callsLimit);
 
