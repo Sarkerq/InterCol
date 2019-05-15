@@ -8,6 +8,6 @@ namespace InterCol
 {
     interface IntervalColoringAlgorithm
     {
-         List<int> ColorGraph(UndirectedGraph graph);
+         UndirectedGraph ColorGraph(UndirectedGraph graph);
     }
 }
