@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ColoringAlgorithmTests.cs" />
+    <Compile Include="BlossomTest.cs" />
     <Compile Include="UndirectedGraphTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

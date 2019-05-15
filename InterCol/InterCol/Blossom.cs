@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace InterCol
 {
-    class Blossom
+    public class Blossom
     {
         UndirectedGraph _graph;
         List<Edge> _graphEdges;
