@@ -11,8 +11,7 @@ namespace InterCol
         private const int callsLimit = 5; 
         public UndirectedGraph ColorGraph(UndirectedGraph graph)
         {
-            var notUsedColors = Enumerable.Range(1, 2 * graph.EdgeCount()).ToList();
-            graph.NotUsedColors = Enumerable.Repeat(notUsedColors, graph.VerticeCount()).ToArray();
+            graph.InitializeNotUsedColors();
             return ColorGraphRecursion(graph);
         }
         
@@ -21,16 +20,7 @@ namespace InterCol
             var notColoredEdges = graph.NotColoredEdges;
             if (notColoredEdges.Count == 0)
                 return graph;
-            notColoredEdges.Sort((e1, e2) =>
-            {
-                var min1 = Math.Min(
-                    graph.EdgesForVertex(e1.V1, false).Count, 
-                    graph.EdgesForVertex(e1.V2, false).Count);
-                var min2 = Math.Min(
-                    graph.EdgesForVertex(e2.V1, false).Count,
-                    graph.EdgesForVertex(e2.V2, false).Count);
-                return min1 > min2 ? 1 : (min1 == min2 ? 0 : -1);
-            });
+            notColoredEdges.Sort((e1, e2) => graph.SortEdgesByColored(e1, e2));
             var limitedSortedNotColoredEdges = notColoredEdges.Take(callsLimit);
 
             foreach (var e in limitedSortedNotColoredEdges)

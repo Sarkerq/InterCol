@@ -35,6 +35,11 @@ namespace InterCol
                 NotUsedColors[i] = new List<int>(graph.NotUsedColors[i]);
         }
 
+        public void InitializeNotUsedColors()
+        {
+            var notUsedColors = Enumerable.Range(1, 2 * EdgeCount()).ToList();
+            NotUsedColors = Enumerable.Repeat(notUsedColors, VerticeCount()).ToArray();
+        }
 
         public int this[int e1, int e2]
         {
@@ -68,6 +73,18 @@ namespace InterCol
                         if (AdjacencyMatrix[i, j] == 1)
                             edges.Add(new Edge(i, j, ColorMatrix[i, j]));
                 return edges;
+            }
+            set
+            {
+                AdjacencyMatrix = new int[AdjacencyMatrix.GetLength(0), AdjacencyMatrix.GetLength(1)];
+                ColorMatrix = new int[ColorMatrix.GetLength(0), ColorMatrix.GetLength(1)];
+                InitializeNotUsedColors();
+                foreach (var edge in value)
+                {
+                    AdjacencyMatrix[edge.V1, edge.V2] = 1;
+                    if (edge.Color != 0)
+                        ColorEdge(edge);
+                }
             }
         }
 
@@ -167,7 +184,7 @@ namespace InterCol
                 colorPosition.MoreColoredVPosition = position2;
                 colorPosition.LessColoredVPosition = position1;
             }
-            return colorPosition; 
+            return colorPosition;
         }
 
         private int? CalculateColorPosition(IEnumerable<int> usedColors, int color)
@@ -290,21 +307,21 @@ namespace InterCol
         }
         public void RemoveEdge(int e1, int e2, bool throwOnNotExist = false)
         {
-            var toRemove = new List<Tuple<int, int>>() { new Tuple<int, int>(e1, e2) };
+            var toRemove = new List<Edge>() { new Edge(e1, e2) };
             RemoveEdges(toRemove, throwOnNotExist);
         }
 
-        public void RemoveEdges(List<Tuple<int, int>> toRemove, bool throwOnNotExist = false)
+        public void RemoveEdges(List<Edge> toRemove, bool throwOnNotExist = false)
         {
             for (int i = 0; i < toRemove.Count; i++)
             {
                 if (throwOnNotExist)
                 {
-                    if (AdjacencyMatrix[toRemove[i].Item1, toRemove[i].Item2] == 0)
-                        throw new Exception("Edge (" + toRemove[i].Item1.ToString() + " , " + toRemove[i].Item2.ToString() + ") does not exist");
+                    if (AdjacencyMatrix[toRemove[i].V1, toRemove[i].V2] == 0)
+                        throw new Exception("Edge (" + toRemove[i].V1.ToString() + " , " + toRemove[i].V2.ToString() + ") does not exist");
                 }
-                AdjacencyMatrix[toRemove[i].Item1, toRemove[i].Item2] = 0;
-                AdjacencyMatrix[toRemove[i].Item2, toRemove[i].Item1] = 0;
+                AdjacencyMatrix[toRemove[i].V1, toRemove[i].V2] = 0;
+                AdjacencyMatrix[toRemove[i].V2, toRemove[i].V1] = 0;
             }
         }
 
@@ -379,6 +396,16 @@ namespace InterCol
         public int EdgeCount()
         {
             return Enumerable.Range(0, AdjacencyMatrix.GetLength(0)).Select(i => VerticeDegree(i)).Sum() / 2;
+        }
+        public int SortEdgesByColored(Edge e1, Edge e2)
+        {
+            var min1 = Math.Min(
+                EdgesForVertex(e1.V1, false).Count,
+                EdgesForVertex(e1.V2, false).Count);
+            var min2 = Math.Min(
+                EdgesForVertex(e2.V1, false).Count,
+                EdgesForVertex(e2.V2, false).Count);
+            return min1 > min2 ? 1 : (min1 == min2 ? 0 : -1);
         }
         public void Save(string filename)
         {

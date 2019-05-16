@@ -13,6 +13,12 @@ namespace InterCol
             V2 = v2;
             Color = color;
         }
+        public Edge(Edge edge)
+        {
+            V1 = edge.V1;
+            V2 = edge.V2;
+            Color = edge.Color;
+        }
     }
     internal class EdgeComparer : IEqualityComparer<Edge>
     {
