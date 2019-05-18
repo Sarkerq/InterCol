@@ -40,10 +40,15 @@ namespace InterColTests
                 new List<int>(){8,6,7,5,8,6,8,7}
             };
 
-            for (int ii = 1; ii < 4; ii++)
+            for (int ii = 1; ii <= handCheckedResults.Count; ii++)
             {
                 var graph = UndirectedGraph.Load(_graphPathCommon + "ColorTest" + ii.ToString() + ".txt");
                 var result = new EdgeAlgorithm().ColorGraph(graph);
+                if (handCheckedResults[ii - 1] == null)
+                {
+                    Assert.IsNull(result);
+                    continue;
+                }
                 int colorIndex = 0;
                 for (int i = 0; i < result.AdjacencyMatrix.GetLength(0); i++)
                     for (int j = i + 1; j < result.AdjacencyMatrix.GetLength(0); j++)
