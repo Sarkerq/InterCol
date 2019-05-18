@@ -73,17 +73,21 @@ namespace InterColTests
                 new List<int>(){8,7,9,8,7,6,8,7,8}
             };
 
-            for (int ii = 1; ii < 4; ii++)
+            for (int ii = 5; ii < handCheckedResults.Count; ii++)
             {
                 var graph = UndirectedGraph.Load(_graphPathCommon + "MatchingColorTest" + ii.ToString() + ".txt");
-                var result = new MatchingAlgorithm().ColorGraph(graph);
-
+                var result = new MatchingAlgorithm(3).ColorGraph(graph);
+                if (handCheckedResults[ii - 1] == null)
+                {
+                    Assert.IsNull(result);
+                    continue;
+                }
                 int colorIndex = 0;
                 for (int i = 0; i < result.AdjacencyMatrix.GetLength(0); i++)
                     for (int j = i + 1; j < result.AdjacencyMatrix.GetLength(0); j++)
                         if (result[i, j] == 1)
                         {
-                            Assert.IsTrue(result.ColorMatrix[i, j] == handCheckedResults[ii][colorIndex]);
+                            Assert.IsTrue(result.ColorMatrix[i, j] == handCheckedResults[ii - 1][colorIndex]);
                             colorIndex++;
                         }
             }

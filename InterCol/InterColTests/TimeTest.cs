@@ -23,9 +23,9 @@ namespace InterColTests
 
             Stopwatch stopwatch;
             UndirectedGraph graph, result;
-            for (int i = 10; i < 15; i++)
+            for (int i = 8; i < 11; i++)
                 for (double j = 0.2d; j < 0.8d; j += 0.2d)
-                    for (int k = 1; k < 5; k++)
+                    for (int k = 1; k <= 5; k++)
                         for (int l = 0; l < 1; l++)
                         {
                             graph = GraphGenerator.Generate(i, j);

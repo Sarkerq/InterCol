@@ -8,7 +8,11 @@ namespace InterCol
 {
     public class MatchingAlgorithm : IntervalColoringAlgorithm
     {
-        private const int callsLimit = 5;
+        private int callsLimit;
+        public MatchingAlgorithm(int callsLimit = 5)
+        {
+            this.callsLimit = callsLimit;
+        }
         public UndirectedGraph ColorGraph(UndirectedGraph graph)
         {
             graph.InitializeNotUsedColors();
