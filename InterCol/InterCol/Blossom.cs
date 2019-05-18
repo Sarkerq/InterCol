@@ -17,6 +17,8 @@ namespace InterCol
         }
         public List<Edge> MaximumMatching()
         {
+            if (_graph.Edges.Count == 0)
+                return new List<Edge>();
             return MaximumMatching(_graph, new List<Edge>() { _graph.Edges[0]});
         }
 

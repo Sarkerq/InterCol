@@ -85,6 +85,8 @@ namespace InterCol
                 foreach (var edge in value)
                 {
                     AdjacencyMatrix[edge.V1, edge.V2] = 1;
+                    AdjacencyMatrix[edge.V2, edge.V1] = 1;
+
                     if (edge.Color != 0)
                         ColorEdge(edge);
                 }
