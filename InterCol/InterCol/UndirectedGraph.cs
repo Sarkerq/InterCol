@@ -30,9 +30,12 @@ namespace InterCol
             for (int i = 0; i < ColorMatrix.GetLength(0); i++)
                 for (int j = 0; j < ColorMatrix.GetLength(1); j++)
                     ColorMatrix[i, j] = graph.ColorMatrix[i, j];
-            NotUsedColors = new List<int>[graph.NotUsedColors.Length];
-            for (int i = 0; i < NotUsedColors.Length; i++)
-                NotUsedColors[i] = new List<int>(graph.NotUsedColors[i]);
+            if (graph.NotUsedColors != null)
+            {
+                NotUsedColors = new List<int>[graph.NotUsedColors.Length];
+                for (int i = 0; i < NotUsedColors.Length; i++)
+                    NotUsedColors[i] = new List<int>(graph.NotUsedColors[i]);
+            }
         }
 
         public void InitializeNotUsedColors()

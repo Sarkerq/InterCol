@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace InterCol
 {
@@ -33,7 +34,9 @@ namespace InterCol
 
         public int GetHashCode(Edge e)
         {
-            return e.GetHashCode();
+            int maxV = Math.Max(e.V1, e.V2);
+            int minV = Math.Min(e.V1, e.V2);
+            return (int)Math.Pow(5, maxV) * (int)Math.Pow(3, minV);
         }
     }
 }
