@@ -21,7 +21,7 @@ namespace InterCol
             Color = edge.Color;
         }
     }
-    internal class EdgeComparer : IEqualityComparer<Edge>
+    public class EdgeComparer : IEqualityComparer<Edge>
     {
         public bool Equals(Edge e1, Edge e2)
         {

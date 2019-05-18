@@ -47,26 +47,21 @@ namespace InterColTests
             new List<List<Edge>>()
             {
                 new List<Edge>(){new Edge(0,2), new Edge(1,3), new Edge(4,6), new Edge(5,7) }
-                ,null
-                ,null
-                ,null
-                ,null
-                ,null
+                ,new List<Edge>(){new Edge(0,1), new Edge(2,3), new Edge(4,5), new Edge(6,7), new Edge(8,9), new Edge(10,11)}
+                ,new List<Edge>(){new Edge(0,1), new Edge(2,3), new Edge(4,5)}
+                ,new List<Edge>(){new Edge(0,1), new Edge(2,3), new Edge(4,5), new Edge(6,7)}
+                ,new List<Edge>(){new Edge(0,1)}
+                ,new List<Edge>(){new Edge(0,1), new Edge(2,3), new Edge(4,5), new Edge(6,7)}
+                ,new List<Edge>(){new Edge(0,1), new Edge(2,3), new Edge(4,5), new Edge(6,7)}
             };
 
-            for (int ii = 1; ii < 6; ii++)
+            for (int ii = 1; ii <= 7; ii++)
             {
                 var graph = UndirectedGraph.Load(_graphPathCommon + "MatchingColorTest" + ii.ToString() + ".txt");
-                var result = new MatchingAlgorithm().ColorGraph(graph);
+                List<Edge> edges = new Blossom(graph).MaximumMatching();
+                Assert.IsTrue(handCheckedResults[ii - 1].Count == edges.Count);
 
-                int colorIndex = 0;
-                for (int i = 0; i < result.AdjacencyMatrix.GetLength(0); i++)
-                    for (int j = i + 1; j < result.AdjacencyMatrix.GetLength(0); j++)
-                        if (result[i, j] == 1)
-                        {
-                            Assert.IsTrue(result.ColorMatrix[i, j] == handCheckedResults[ii][colorIndex]);
-                            colorIndex++;
-                        }
+                Assert.IsTrue(edges.Intersect(handCheckedResults[ii - 1], new EdgeComparer()).Count() == edges.Count);
             }
         }
     }
