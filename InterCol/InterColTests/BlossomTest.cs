@@ -14,7 +14,7 @@ namespace InterColTests
         string _graphPathCommon = "../../GraphExamples/";
 
         [TestMethod]
-        public void EdgeAlgorithmColoringTests()
+        public void BlossomAlgorithmBigTest()
         {
             List<Edge> internetResults =
             new List<Edge>()
@@ -34,7 +34,7 @@ namespace InterColTests
 
             Assert.IsTrue(internetResults.Count == edges.Count);
 
-            foreach(var internetEdge in internetResults)
+            foreach (var internetEdge in internetResults)
             {
                 Edge foundEdge = edges.Single(e => (e.V1 == internetEdge.V1 && e.V2 == internetEdge.V2) || (e.V2 == internetEdge.V1 && e.V1 == internetEdge.V2));
                 edges.Remove(foundEdge);

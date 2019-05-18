@@ -17,7 +17,7 @@ namespace InterCol
         }
         public List<Edge> MaximumMatching()
         {
-            return MaximumMatching(_graph, new List<Edge>());
+            return MaximumMatching(_graph, new List<Edge>() { _graph.Edges[0]});
         }
 
         private List<Edge> MaximumMatching(UndirectedGraph graph, List<Edge> currentMatching)
@@ -30,12 +30,14 @@ namespace InterCol
 
         private List<Edge> AugmentAlong(List<Edge> currentMatching, List<Edge> augmentingPath)
         {
-            List<Edge> augmentedMatching = new List<Edge>();
-            if (augmentingPath.Count % 2 != 1 || currentMatching.Count != augmentingPath.Count - 1)
+            List<Edge> augmentedMatching = augmentingPath.Intersect(currentMatching).ToList();
+            List<Edge> remainingMatching = currentMatching.Except(augmentingPath).ToList();
+
+            if (augmentingPath.Count % 2 != 1 || augmentingPath.Except(augmentedMatching).Count() != augmentedMatching.Count + 1)
                 throw new Exception("Invalid augmenting path");
             for (int i = 0; i < augmentingPath.Count; i += 2)
-                augmentedMatching.Add(augmentingPath[i]);
-            return augmentedMatching;
+                remainingMatching.Add(augmentingPath[i]);
+            return remainingMatching;
         }
 
         private List<Edge> FindAugmentingPath(UndirectedGraph graph, List<Edge> currentMatching)
@@ -68,16 +70,17 @@ namespace InterCol
                             {
 
                                 return GetPathFromRoot(forest[GetVerticeRoot(forest, targetV)], GetVerticeRoot(forest, targetV), targetV).
+                                    Concat(new List<Edge>() { new Edge(targetV,secondV)}).
                                     Concat(GetPathToRoot(forest[GetVerticeRoot(forest, secondV)], GetVerticeRoot(forest, secondV), secondV)).ToList();
                             }
                             else
                             {
                                 //Contract a blossom in G
                                 List<Edge> blossom = GetBlossom(targetV, secondV, forest);
-                                UndirectedGraph newGraph = Contract(graph, blossom, targetV);
+                                UndirectedGraph contractedGraph = Contract(graph, blossom, targetV);
                                 List<Edge> newMatching = Contract(currentMatching, blossom, targetV);
-                                List<Edge> path = FindAugmentingPath(newGraph, newMatching);
-                                return Lift(path, blossom, targetV);
+                                List<Edge> path = FindAugmentingPath(contractedGraph, newMatching);
+                                return Lift(path, blossom, targetV, graph);
                             }
                         }
                     }
@@ -88,19 +91,52 @@ namespace InterCol
             return new List<Edge>();
         }
 
-        private List<Edge> Lift(List<Edge> path, List<Edge> blossom, int blossomRoot)
+        private List<Edge> Lift(List<Edge> path, List<Edge> blossom, int blossomRoot, UndirectedGraph graph)
         {
+            List<Edge> blossomPart = null;
             List<Edge> rootNeighbours = path.Where(e => e.V1 == blossomRoot || e.V2 == blossomRoot).ToList();
+            int blossomEdgeIndex = path.IndexOf(path.First(e => e.V1 == blossomRoot || e.V2 == blossomRoot));
+
             if (rootNeighbours.Count == 1)
             {
-
+                if (blossomEdgeIndex == 0)
+                {
+                    return blossom.Skip(0).Reverse().Take(blossom.Count() - 1).
+                        Concat(path.Skip(1)).ToList();
+                }
+                else
+                {
+                    return path.Skip(1).
+                        Concat(blossom.Take(blossom.Count() - 1)).ToList();
+                }
             }
             else
             {
                 if (rootNeighbours.Count != 2) throw new Exception("Invalid neighbours number");
+
+                int liftedRootNeighbour = rootNeighbours.SelectMany(e => new List<int> { e.V1, e.V2 }).Distinct().First(v => v != blossomRoot && graph[v, blossomRoot] == 1);
+                int liftedNonRootNeighbour = rootNeighbours.SelectMany(e => new List<int> { e.V1, e.V2 }).Distinct().First(v => v != blossomRoot && v != liftedRootNeighbour);
+
+                int blossomNeighbour = blossom.SelectMany(e => new List<int> { e.V1, e.V2 }).Distinct().First(v => v != blossomRoot && graph[v, liftedNonRootNeighbour] == 1);
+                Edge neighbourBlossomEdge = blossom.First(e => e.V1 == blossomNeighbour || e.V2 == blossomNeighbour);
+                int distanceV = RootDistance(blossom, neighbourBlossomEdge);
+                if (distanceV % 2 == 0)
+                    blossomPart = blossom.Take(distanceV).ToList();
+                else
+                    blossomPart = blossom.Skip(distanceV).Reverse().ToList();
+
+                return path.Take(blossomEdgeIndex).
+                    Concat(new List<Edge> { new Edge(liftedRootNeighbour, blossomRoot) }).
+                    Concat(blossomPart).
+                    Concat(new List<Edge> { new Edge(blossomNeighbour, liftedNonRootNeighbour) }).
+                    Concat(path.Skip(blossomEdgeIndex + 2)).ToList();
             }
 
-            return null;
+        }
+
+        private int RootDistance(List<Edge> blossom, Edge neighbourBlossomEdge)
+        {
+            return blossom.IndexOf(neighbourBlossomEdge) + 1;
         }
 
         private List<Edge> Contract(List<Edge> currentMatching, List<Edge> blossom, int contractV)
@@ -152,6 +188,7 @@ namespace InterCol
 
         private List<Edge> GetPathToRoot(UndirectedGraph undirectedGraph, int root, int startV)
         {
+            if (startV == root) return new List<Edge>();
             //pair (newVertice,oldVertice)
             bool[,] discovered = new bool[undirectedGraph.AdjacencyMatrix.GetLength(0), undirectedGraph.AdjacencyMatrix.GetLength(0)];
             Queue<KeyValuePair<int, int>> verticeQueue = new Queue<KeyValuePair<int, int>>();
@@ -196,6 +233,7 @@ namespace InterCol
             foreach (var pair in forest)
             {
                 int key = pair.Key;
+                if (key == targetV) return key;
                 UndirectedGraph tree = pair.Value;
                 if (tree.VerticeDegree(targetV) > 0)
                     return key;
@@ -211,6 +249,7 @@ namespace InterCol
                 UndirectedGraph tree = pair.Value;
                 try
                 {
+                    if (vertice == root) return false;
                     int distance = GetPathFromRoot(tree, root, vertice).Count;
                     if (distance % 2 == 1)
                         return true;
@@ -232,9 +271,10 @@ namespace InterCol
 
         private bool InForest(Dictionary<int, UndirectedGraph> forest, int secondV)
         {
-            foreach (var tree in forest.Values)
+            foreach (var treePair in forest)
             {
-                if (tree.VerticeDegree(secondV) > 0)
+                if (treePair.Key == secondV) return true;
+                if (treePair.Value.VerticeDegree(secondV) > 0)
                     return true;
             }
             return false;
@@ -254,6 +294,7 @@ namespace InterCol
                     UndirectedGraph tree = pair.Value;
                     try
                     {
+                        if (v == root) return v;
                         int distance = GetPathFromRoot(tree, root, v).Count;
                         if (distance % 2 == 0)
                             return v;
