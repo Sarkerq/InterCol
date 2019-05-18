@@ -40,7 +40,10 @@ namespace InterCol
                         anyEdgeColored = true;
                     }
                     else
-                        anyEdgeColored = false; //czy nie zwracac albo wychodzic z petli od razu?
+                    {
+                        anyEdgeColored = false;
+                        break;
+                    }
                 }
                 if (anyEdgeColored)
                     return ColorGraphRecursion(graphPrim);

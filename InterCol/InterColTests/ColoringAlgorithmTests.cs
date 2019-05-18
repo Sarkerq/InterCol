@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using InterCol;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Diagnostics;
 
 namespace InterColTests
 {
@@ -66,14 +67,13 @@ namespace InterColTests
             new List<List<int>>()
             {
                 new List<int>(){10,10,7,9,8,9,8,10,10,9},
-                new List<int>(){11,10,11,9,11,10,11,9,11,10,11},
                 new List<int>(){6,4,5,6,5,6},
                 new List<int>(){9,8,7,9,8,9,7,8,9},
                 null,
-                new List<int>(){8,7,9,8,7,6,8,7,8}
+                new List<int>(){9,8,7,9,8,10,9,8,9}
             };
 
-            for (int ii = 5; ii < handCheckedResults.Count; ii++)
+            for (int ii = 1; ii <= handCheckedResults.Count; ii++)
             {
                 var graph = UndirectedGraph.Load(_graphPathCommon + "MatchingColorTest" + ii.ToString() + ".txt");
                 var result = new MatchingAlgorithm(3).ColorGraph(graph);

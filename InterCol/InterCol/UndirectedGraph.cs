@@ -153,7 +153,7 @@ namespace InterCol
                     return 1;
                 if (c1.MoreColoredVPosition < c2.MoreColoredVPosition)
                     return -1;
-                return 0;
+                return c1.Color > c2.Color ? 1 : (c1.Color == c2.Color ? 0 : -1);
             });
 
             for (int i = 0; i < rankedColors.Count; i++)

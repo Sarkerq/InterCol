@@ -11,7 +11,7 @@ using System.Globalization;
 namespace InterColTests
 {
     [TestClass]
-    public class TimeTest
+    class TimeTest
     {
         [TestMethod]
         public void Test()
@@ -23,23 +23,23 @@ namespace InterColTests
 
             Stopwatch stopwatch;
             UndirectedGraph graph, result;
-            for (int i = 8; i < 11; i++)
+            for (int i = 3; i < 8; i++)
                 for (double j = 0.2d; j < 0.8d; j += 0.2d)
-                    for (int k = 1; k <= 5; k++)
-                        for (int l = 0; l < 1; l++)
-                        {
-                            graph = GraphGenerator.Generate(i, j);
+                {
+                    graph = GraphGenerator.Generate(i, j);
+                    for (int k = 1; k <= 4; k++)
+                    {
+                        stopwatch = Stopwatch.StartNew();
+                        result = new EdgeAlgorithm(k).ColorGraph(graph);
+                        stopwatch.Stop();
+                        File.AppendAllText(filePath, string.Join(separator, "Edge", i, j.ToString(CultureInfo.InvariantCulture), k, stopwatch.ElapsedMilliseconds) + Environment.NewLine);
 
-                            stopwatch = Stopwatch.StartNew();
-                            result = new EdgeAlgorithm(k).ColorGraph(graph);
-                            stopwatch.Stop();
-                            File.AppendAllText(filePath, string.Join(separator, "Edge", i, j.ToString(CultureInfo.InvariantCulture), k, stopwatch.ElapsedMilliseconds) + Environment.NewLine);
-
-                            //stopwatch = Stopwatch.StartNew();
-                            //result = new MatchingAlgorithm().ColorGraph(graph);
-                            //stopwatch.Stop();
-                            //matchingAlgorithmTimes.Add(stopwatch.ElapsedMilliseconds);
-                        }
+                        stopwatch = Stopwatch.StartNew();
+                        result = new MatchingAlgorithm(k).ColorGraph(graph);
+                        stopwatch.Stop();
+                        File.AppendAllText(filePath, string.Join(separator, "Matching", i, j.ToString(CultureInfo.InvariantCulture), k, stopwatch.ElapsedMilliseconds) + Environment.NewLine);
+                    }
+                }
         }
     }
 }
