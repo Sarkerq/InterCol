@@ -8,7 +8,11 @@ namespace InterCol
 {
     public class EdgeAlgorithm : IntervalColoringAlgorithm
     {
-        private const int callsLimit = 5; 
+        private int callsLimit; 
+        public EdgeAlgorithm(int callsLimit = 5)
+        {
+            this.callsLimit = callsLimit;
+        }
         public UndirectedGraph ColorGraph(UndirectedGraph graph)
         {
             graph.InitializeNotUsedColors();

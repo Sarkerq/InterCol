@@ -46,6 +46,7 @@
     <Compile Include="ColorPosition.cs" />
     <Compile Include="Edge.cs" />
     <Compile Include="EdgeAlgorithm.cs" />
+    <Compile Include="GraphGenerator.cs" />
     <Compile Include="IntervalColoringAlgorithm.cs" />
     <Compile Include="MatchingAlgorithm.cs" />
     <Compile Include="Program.cs" />

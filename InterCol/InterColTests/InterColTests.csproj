@@ -48,6 +48,8 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TimeTest.cs" />
+    <Compile Include="GraphGeneratorTest.cs" />
     <Compile Include="ColoringAlgorithmTests.cs" />
     <Compile Include="BlossomTest.cs" />
     <Compile Include="UndirectedGraphTest.cs" />

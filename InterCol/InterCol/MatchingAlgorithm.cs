@@ -33,10 +33,10 @@ namespace InterCol
                     if (color != null)
                     {
                         graphPrim.ColorEdge(new Edge(edge.V1, edge.V2, color.Value));
-                        anyEdgeColored = true;      // cos nie tak z check range i validation (zwracanie nulli - 2 znaczenia?)
+                        anyEdgeColored = true;
                     }
                     else
-                        anyEdgeColored = false;
+                        anyEdgeColored = false; //czy nie zwracac albo wychodzic z petli od razu?
                 }
                 if (anyEdgeColored)
                     return ColorGraphRecursion(graphPrim);
