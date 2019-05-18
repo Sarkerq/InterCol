@@ -19,7 +19,6 @@ namespace InterCol
             AdjacencyMatrix = new int[v, v];
             ColorMatrix = new int[v, v];
         }
-
         public UndirectedGraph(UndirectedGraph graph)
         {
             AdjacencyMatrix = new int[graph.AdjacencyMatrix.GetLength(0), graph.AdjacencyMatrix.GetLength(0)];
@@ -37,13 +36,11 @@ namespace InterCol
                     NotUsedColors[i] = new List<int>(graph.NotUsedColors[i]);
             }
         }
-
         public void InitializeNotUsedColors()
         {
             var notUsedColors = Enumerable.Range(1, 2 * EdgeCount()).ToList();
             NotUsedColors = Enumerable.Repeat(notUsedColors, VerticeCount()).ToArray();
         }
-
         public int this[int e1, int e2]
         {
             get
@@ -51,21 +48,11 @@ namespace InterCol
                 return AdjacencyMatrix[e1, e2];
             }
         }
-
         public void AddEdge(int e1, int e2, bool throwOnExist = false)
         {
             var toAdd = new List<Tuple<int, int>>() { new Tuple<int, int>(e1, e2) };
             AddEdges(toAdd, throwOnExist);
         }
-
-        public UndirectedGraph Subgraph(List<int> vertices)
-        {
-            var subgraph = new UndirectedGraph(this);
-            subgraph.RemoveVertices(Enumerable.Range(0, subgraph.VerticeCount()).Where(i => !vertices.Contains(i)).ToList());
-
-            return subgraph;
-        }
-
         public List<Edge> Edges
         {
             get
@@ -92,7 +79,6 @@ namespace InterCol
                 }
             }
         }
-
         public List<Edge> NotColoredEdges
         {
             get
@@ -100,7 +86,6 @@ namespace InterCol
                 return Edges.FindAll(e => e.Color == 0);
             }
         }
-
         public List<Edge> EdgesForVertex(int vertex, bool? colored = null)
         {
             List<Edge> edges = new List<Edge>();
@@ -109,7 +94,6 @@ namespace InterCol
                     edges.Add(new Edge(i, vertex, ColorMatrix[i, vertex]));
             return edges;
         }
-
         public int? CalculateColor(Edge edge)
         {
             var edges1 = EdgesForVertex(edge.V1).ToList();
@@ -222,81 +206,6 @@ namespace InterCol
             NotUsedColors[edge.V2].Remove(edge.Color);
         }
 
-        public bool IsSubgraphConsistent(List<int> subgraphVertices)
-        {
-            var subgraphVerticesClone = new List<int>(subgraphVertices);
-
-            List<int> verticesBfs = new List<int>();
-            verticesBfs.Add(subgraphVerticesClone[0]);
-            subgraphVerticesClone.RemoveAt(0);
-            while (verticesBfs.Count > 0)
-            {
-                var currentVertice = verticesBfs[0];
-                verticesBfs.RemoveAt(0);
-
-                List<int> verticesToRemove = new List<int>();
-                for (int i = 0; i < subgraphVerticesClone.Count; i++)
-                {
-                    if (AdjacencyMatrix[currentVertice, subgraphVerticesClone[i]] == 1)
-                    {
-                        verticesBfs.Add(subgraphVerticesClone[i]);
-                        verticesToRemove.Add(subgraphVerticesClone[i]);
-                    }
-                }
-                foreach (int vertice in verticesToRemove)
-                {
-                    subgraphVerticesClone.Remove(vertice);
-                }
-            }
-
-            return subgraphVerticesClone.Count == 0;
-        }
-
-        public int SubgraphEdgesCount(List<int> subgraphVertices)
-        {
-            int result = 0;
-
-            foreach (var v1 in subgraphVertices)
-            {
-                foreach (var v2 in subgraphVertices)
-                {
-                    if (this[v1, v2] == 1)
-                        result++;
-                }
-            }
-
-            return result / 2;
-        }
-
-        internal List<List<int>> GetConnectionsWithSubgraph(List<int> vertices)
-        {
-            List<List<int>> connections = new List<List<int>>();
-            for (int i = 0; i < AdjacencyMatrix.GetLength(0); i++)
-            {
-                connections.Add(new List<int>());
-                foreach (int vertice in vertices)
-                {
-                    if (AdjacencyMatrix[i, vertice] == 1) connections[i].Add(vertice);
-                }
-            }
-            return connections;
-        }
-
-        public static bool Identical(UndirectedGraph first, UndirectedGraph second)
-        {
-            if (first.AdjacencyMatrix.GetLength(0) != second.AdjacencyMatrix.GetLength(0))
-                return false;
-            for (int i = 0; i < first.AdjacencyMatrix.GetLength(0); i++)
-                for (int j = 0; j < first.AdjacencyMatrix.GetLength(0); j++)
-                    if (first[i, j] != second[i, j])
-                        return false;
-            return true;
-        }
-
-
-
-
-
         public void AddEdges(List<Tuple<int, int>> toAdd, bool throwOnExist = false)
         {
             for (int i = 0; i < toAdd.Count; i++)
@@ -328,62 +237,6 @@ namespace InterCol
                 AdjacencyMatrix[toRemove[i].V1, toRemove[i].V2] = 0;
                 AdjacencyMatrix[toRemove[i].V2, toRemove[i].V1] = 0;
             }
-        }
-
-        public void AddVertex()
-        {
-            AddVertices(1);
-        }
-
-        public void AddVertices(int amount)
-        {
-            int oldVerticesAmount = AdjacencyMatrix.GetLength(0);
-            int newVerticesAmount = oldVerticesAmount + amount;
-            AdjacencyMatrix = ResizeArray(AdjacencyMatrix, newVerticesAmount, newVerticesAmount);
-        }
-
-
-        private T[,] ResizeArray<T>(T[,] original, int x, int y)
-        {
-            T[,] newArray = new T[x, y];
-            int minX = Math.Min(original.GetLength(0), newArray.GetLength(0));
-            int minY = Math.Min(original.GetLength(1), newArray.GetLength(1));
-
-            for (int i = 0; i < minY; ++i)
-                Array.Copy(original, i * original.GetLength(0), newArray, i * newArray.GetLength(0), minX);
-
-            return newArray;
-        }
-        public void RemoveVertex(int v)
-        {
-            RemoveVertices(new List<int>() { v });
-        }
-
-        public void RemoveVertices(List<int> toRemove)
-        {
-            Debug.Assert(toRemove.Distinct().Count() == toRemove.Count);
-            int newSize = AdjacencyMatrix.GetLength(0) - toRemove.Count;
-            int[,] newAdjacencyMatrix = new int[newSize, newSize];
-            int oldi = 0, oldj = 0;
-            for (int i = 0; i < newSize; i++, oldi++)
-            {
-                oldj = 0;
-                if (toRemove.Contains(oldi))
-                {
-                    i--;
-                    continue;
-                }
-                for (int j = 0; j < newSize; j++, oldj++)
-                {
-                    if (toRemove.Contains(oldj))
-                    {
-                        j--;
-                        continue;
-                    }
-                    newAdjacencyMatrix[i, j] = AdjacencyMatrix[oldi, oldj];
-                }
-            }
-            AdjacencyMatrix = newAdjacencyMatrix;
         }
         public int VerticeDegree(int v)
         {

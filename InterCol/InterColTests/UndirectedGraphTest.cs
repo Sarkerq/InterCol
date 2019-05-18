@@ -39,78 +39,6 @@ namespace InterColTests
             Assert.IsTrue(graph.VerticeDegree(1) == 1);
         }
         [TestMethod]
-        public void VerticeDegreeTestAfterRemovingVertice()
-        {
-            var graph = new UndirectedGraph(5);
-            graph.AddEdges(new System.Collections.Generic.List<Tuple<int, int>>()
-            {
-                new Tuple<int, int>(0,1),
-                new Tuple<int, int>(1,2),
-                new Tuple<int, int>(2,3),
-                new Tuple<int, int>(3,4),
-                new Tuple<int, int>(4,0),
-
-            });
-            graph.RemoveVertex(2);
-            Assert.IsTrue(graph.VerticeDegree(1) == 1);
-        }
-        [TestMethod]
-        public void SaveAndLoadResultsInIdenticalGraph()
-        {
-            string savedPath = "tmp/test.txt";
-            string fullSavePath = _graphPathCommon + savedPath;
-
-            var graph = new UndirectedGraph(5);
-            graph.AddEdges(new System.Collections.Generic.List<Tuple<int, int>>()
-            {
-                new Tuple<int, int>(0,1),
-                new Tuple<int, int>(1,2),
-                new Tuple<int, int>(2,3),
-                new Tuple<int, int>(3,4),
-                new Tuple<int, int>(4,0),
-
-            });
-
-            graph.Save(fullSavePath);
-            var graph2 = UndirectedGraph.Load(fullSavePath);
-            Assert.IsTrue(UndirectedGraph.Identical(graph, graph2));
-        }
-        [TestMethod]
-        public void LoadAndSaveResultsInIdenticalGraph()
-        {
-            List<string> graphPaths = new List<string>()
-            {
-                "C10.txt",
-                "K4.txt",
-                "Empty5.txt",
-                "Matching12.txt"
-            };
-            List<string> fullGraphPaths = graphPaths.Select(p => _graphPathCommon + p).ToList();
-            foreach (string path in fullGraphPaths)
-            {
-                string savedPath = "tmp/test.txt";
-
-                string fullSavePath = _graphPathCommon + savedPath;
-                var graph = UndirectedGraph.Load(path);
-                graph.Save(fullSavePath);
-                string origFileContents = File.ReadAllText(path);
-                string savedFileContents = File.ReadAllText(fullSavePath);
-                Assert.IsTrue(StringEqualToWhitespace(origFileContents, savedFileContents));
-            }
-        }
-
-        private bool StringEqualToWhitespace(string s1, string s2)
-        {
-            string normalized1 = Regex.Replace(s1, @"\s", "");
-            string normalized2 = Regex.Replace(s2, @"\s", "");
-
-            return String.Equals(
-                normalized1,
-                normalized2,
-                StringComparison.OrdinalIgnoreCase);
-        }
-
-        [TestMethod]
         public void C10LoadsCorrect()
         {
             var graph = UndirectedGraph.Load(_graphPathCommon + "C10.txt");
@@ -158,22 +86,6 @@ namespace InterColTests
                 new Tuple<int, int>(0,2),
             });
             graph.RemoveEdge(0, 1);
-            Assert.IsTrue(graph.VerticeDegree(1) == 1);
-        }
-        [TestMethod]
-        public void AdjacencyMatrixTestAfterRemovingVertice()
-        {
-            var graph = new UndirectedGraph(5);
-            graph.AddEdges(new System.Collections.Generic.List<Tuple<int, int>>()
-            {
-                new Tuple<int, int>(0,1),
-                new Tuple<int, int>(1,2),
-                new Tuple<int, int>(2,3),
-                new Tuple<int, int>(3,4),
-                new Tuple<int, int>(4,0),
-
-            });
-            graph.RemoveVertex(2);
             Assert.IsTrue(graph.VerticeDegree(1) == 1);
         }
     }
